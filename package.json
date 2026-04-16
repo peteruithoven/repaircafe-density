@@ -1,0 +1,22 @@
+{
+  "name": "repaircafe-density",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/cli.js",
+  "bin": {
+    "repaircafe-density": "./bin/cli.js"
+  },
+  "scripts": {
+    "fetch": "node bin/cli.js fetch",
+    "geocode": "node bin/cli.js geocode-missing",
+    "analyze": "node bin/cli.js analyze",
+    "list-missing-city-country": "node bin/cli.js list-missing-city-country",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
+  }
+}
