@@ -22,11 +22,13 @@ export async function runAnalyzeCommand(options) {
   }
 
   console.log('');
+  console.log(`Repair Cafes on repaircafe.org: ${summary.totalRepairCafes}`);
+  console.log(`Repair Cafes with coordinates: ${summary.repairCafesWithCoordinates}`);
   console.log(`Stored geocoding files used: ${summary.usedResults}`);
   console.log(`Missing geocoding files: ${summary.missingResults}`);
   console.log(`Usable city/country matches: ${summary.usableResults}`);
-  console.log(`Skipped geocoding files without city/country: ${summary.unusableResults}`);
-  console.log(`Repair Cafes with invalid coordinates: ${summary.invalidCoordinates}`);
+  console.log(`Geocoding files without country: ${summary.missingCountry}`);
+  console.log(`Geocoding files without city: ${summary.missingCity}`);
 }
 
 function parsePositiveInteger(value, fallback, name) {

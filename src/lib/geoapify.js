@@ -16,9 +16,19 @@ export async function reverseGeocodeCity({ latitude, longitude, apiKey }) {
 }
 
 export function extractCityCountry(geoapifyResponse) {
+  const { city, country } = extractCityCountryParts(geoapifyResponse);
+
+  if (!city || !country) {
+    return null;
+  }
+
+  return { city, country };
+}
+
+export function extractCityCountryParts(geoapifyResponse) {
   const properties = geoapifyResponse?.features?.[0]?.properties;
   if (!properties || typeof properties !== 'object') {
-    return null;
+    return { city: null, country: null };
   }
 
   const city = firstNonEmptyString([
@@ -28,10 +38,6 @@ export function extractCityCountry(geoapifyResponse) {
     properties.municipality,
   ]);
   const country = firstNonEmptyString([properties.country]);
-
-  if (!city || !country) {
-    return null;
-  }
 
   return { city, country };
 }

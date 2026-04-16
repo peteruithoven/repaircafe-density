@@ -1,18 +1,22 @@
-import { extractCityCountry } from './geoapify.js';
+import { extractCityCountry, extractCityCountryParts } from './geoapify.js';
 import { getCoordinatePair, getSlugFromCafeLink } from './repairCafeRecord.js';
 import { readStoredResult } from './resultStore.js';
 
 export async function buildCityRanking(records, { top = 20 } = {}) {
   const grouped = new Map();
+  const totalRepairCafes = records.length;
   let invalidCoordinates = 0;
+  let missingCity = 0;
+  let missingCountry = 0;
   let missingResults = 0;
   let usableResults = 0;
-  let unusableResults = 0;
   let usedResults = 0;
 
   for (const cafe of records) {
-    if (!getCoordinatePair(cafe.coordinate)) {
+    const coordinates = getCoordinatePair(cafe.coordinate);
+    if (!coordinates) {
       invalidCoordinates += 1;
+      continue;
     }
 
     const slug = getSlugFromCafeLink(cafe.link);
@@ -26,7 +30,15 @@ export async function buildCityRanking(records, { top = 20 } = {}) {
     usedResults += 1;
     const location = extractCityCountry(geoapifyResponse);
     if (!location) {
-      unusableResults += 1;
+      const parts = extractCityCountryParts(geoapifyResponse);
+      if (!parts.city) {
+        missingCity += 1;
+      }
+
+      if (!parts.country) {
+        missingCountry += 1;
+      }
+
       continue;
     }
 
@@ -68,10 +80,13 @@ export async function buildCityRanking(records, { top = 20 } = {}) {
   return {
     rows,
     topCount: top,
+    totalRepairCafes,
+    repairCafesWithCoordinates: totalRepairCafes - invalidCoordinates,
     invalidCoordinates,
+    missingCity,
+    missingCountry,
     missingResults,
     usableResults,
-    unusableResults,
     usedResults,
   };
 }
