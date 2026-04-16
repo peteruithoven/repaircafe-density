@@ -1,6 +1,7 @@
 import { runAnalyzeCommand } from './commands/analyze.js';
 import { runFetchCommand } from './commands/fetch.js';
 import { runGeocodeMissingCommand } from './commands/geocode-missing.js';
+import { runListInvalidCoordinatesCommand } from './commands/list-invalid-coordinates.js';
 import { runListMissingCityCountryCommand } from './commands/list-missing-city-country.js';
 
 const HELP_TEXT = `Repair Cafe city ranking CLI
@@ -10,6 +11,7 @@ Usage:
   node bin/cli.js geocode-missing [--limit=100] [--delay-ms=250]
   node bin/cli.js analyze [--top=20]
   node bin/cli.js list-missing-city-country
+  node bin/cli.js list-invalid-coordinates
 
 Environment:
   GEOAPIFY_API_KEY   Required for geocode-missing
@@ -35,6 +37,9 @@ export async function runCli(argv) {
       return;
     case 'list-missing-city-country':
       await runListMissingCityCountryCommand();
+      return;
+    case 'list-invalid-coordinates':
+      await runListInvalidCoordinatesCommand();
       return;
     default:
       throw new Error(`Unknown command: ${command}\n\n${HELP_TEXT}`);

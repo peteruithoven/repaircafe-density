@@ -100,3 +100,20 @@ export async function listCafesMissingCityCountry(records) {
 
   return cafes;
 }
+
+export async function listCafesWithInvalidCoordinates(records) {
+  const cafes = [];
+
+  for (const cafe of records) {
+    if (getCoordinatePair(cafe.coordinate)) {
+      continue;
+    }
+
+    cafes.push({
+      link: cafe.link,
+      slug: getSlugFromCafeLink(cafe.link),
+    });
+  }
+
+  return cafes;
+}
