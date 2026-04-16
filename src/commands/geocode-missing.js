@@ -4,7 +4,7 @@ import { getCoordinatePair, getSlugFromCafeLink } from '../lib/repairCafeRecord.
 import {
   ensureResultDirectory,
   getResultFilePath,
-  hasStoredResult,
+  listStoredResultSlugs,
   storeResult,
 } from '../lib/resultStore.js';
 
@@ -22,27 +22,45 @@ export async function runGeocodeMissingCommand(options) {
   await ensureResultDirectory();
 
   const { cache } = await ensureRepairCafeCache();
-
-  let processed = 0;
-  let skippedExisting = 0;
+  const cafesWithCoordinates = [];
   let skippedInvalid = 0;
 
   for (const cafe of cache.records) {
-    if (processed >= limit) {
-      break;
-    }
-
-    const slug = getSlugFromCafeLink(cafe.link);
-    if (await hasStoredResult(slug)) {
-      skippedExisting += 1;
-      continue;
-    }
-
     const coordinates = getCoordinatePair(cafe.coordinate);
     if (!coordinates) {
       skippedInvalid += 1;
-      console.warn(`Skipping ${slug}: invalid coordinates.`);
       continue;
+    }
+
+    cafesWithCoordinates.push({
+      cafe,
+      coordinates,
+    });
+  }
+
+  const storedResultSlugs = new Set(await listStoredResultSlugs());
+  const pendingCafes = [];
+
+  for (const entry of cafesWithCoordinates) {
+    const slug = getSlugFromCafeLink(entry.cafe.link);
+    if (storedResultSlugs.has(slug)) {
+      continue;
+    }
+
+    pendingCafes.push({
+      ...entry,
+      slug,
+    });
+  }
+
+  const targetCount = Math.min(limit, pendingCafes.length);
+
+  let processed = 0;
+  const skippedExisting = cafesWithCoordinates.length - pendingCafes.length;
+
+  for (const { coordinates, slug } of pendingCafes) {
+    if (processed >= targetCount) {
+      break;
     }
 
     const response = await reverseGeocodeCity({
@@ -55,9 +73,9 @@ export async function runGeocodeMissingCommand(options) {
     processed += 1;
 
     const filePath = getResultFilePath(slug);
-    console.log(`[${processed}/${limit}] Stored ${slug} -> ${filePath}`);
+    console.log(`[${processed}/${targetCount}] Stored ${slug} -> ${filePath}`);
 
-    if (processed < limit) {
+    if (processed < targetCount) {
       await sleep(delayMs);
     }
   }
@@ -67,7 +85,7 @@ export async function runGeocodeMissingCommand(options) {
   console.log(`Already cached and skipped: ${skippedExisting}`);
   console.log(`Invalid coordinates skipped: ${skippedInvalid}`);
 
-  if (processed === limit) {
+  if (processed === targetCount && pendingCafes.length > limit) {
     console.log(`Stopped at configured limit (${limit}) to keep daily API usage conservative.`);
   }
 }
