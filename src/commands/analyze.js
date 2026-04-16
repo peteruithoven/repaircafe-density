@@ -16,8 +16,8 @@ export async function runAnalyzeCommand(options) {
   } else {
     for (const row of summary.rows) {
       const rank = String(row.rank).padStart(2, ' ');
-      const count = String(row.count).padStart(4, ' ');
-      console.log(`${rank}. ${row.city}, ${row.country} (${count})`);
+      const count = String(row.count).padStart(2, ' ');
+      console.log(`${rank}. ${count} in ${row.city}, ${row.country}`);
     }
   }
 
