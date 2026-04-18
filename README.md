@@ -1,6 +1,6 @@
 # Repair Café density
 
-Analyze te density of Repair Cafés, to see which cities have the most Repair Cafés. 
+Analyze the density of Repair Cafés, to see which cities have the most Repair Cafés. 
 
 Repaircafe.org has an [public API](https://www.repaircafe.org/api/)  where each Repair Café has coordinates. We've used these coordinates and [Geoapify's API](https://www.geoapify.com/reverse-geocoding-api/) to reverse geocode towards machine readable location data like countries and cities. After retrieving that data a simple city ranking becomes possible. On apr 17 2026 the result is:
 ```
