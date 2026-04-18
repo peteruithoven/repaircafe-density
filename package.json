@@ -2,7 +2,7 @@
   "name": "repaircafe-density",
   "version": "1.0.0",
   "description": "",
-  "license": "MIT",
+  "license": " GPL-3.0",
   "author": "",
   "type": "module",
   "main": "src/cli.js",
@@ -13,6 +13,7 @@
     "fetch": "node bin/cli.js fetch",
     "geocode": "node bin/cli.js geocode-missing",
     "analyze": "node bin/cli.js analyze",
+    "export": "node bin/cli.js export",
     "list-invalid-coordinates": "node bin/cli.js list-invalid-coordinates",
     "list-missing-city-country": "node bin/cli.js list-missing-city-country",
     "test": "echo \"Error: no test specified\" && exit 1"
