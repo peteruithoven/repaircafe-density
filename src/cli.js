@@ -1,4 +1,5 @@
 import { runAnalyzeCommand } from './commands/analyze.js';
+import { runExportCommand } from './commands/export.js';
 import { runFetchCommand } from './commands/fetch.js';
 import { runGeocodeMissingCommand } from './commands/geocode-missing.js';
 import { runListInvalidCoordinatesCommand } from './commands/list-invalid-coordinates.js';
@@ -10,6 +11,7 @@ Usage:
   node bin/cli.js fetch
   node bin/cli.js geocode-missing [--limit=100] [--delay-ms=250]
   node bin/cli.js analyze [--top=20]
+  node bin/cli.js export [--output=data/repaircafe-export.csv]
   node bin/cli.js list-missing-city-country
   node bin/cli.js list-invalid-coordinates
 
@@ -34,6 +36,9 @@ export async function runCli(argv) {
       return;
     case 'analyze':
       await runAnalyzeCommand(parseOptions(args));
+      return;
+    case 'export':
+      await runExportCommand(parseOptions(args));
       return;
     case 'list-missing-city-country':
       await runListMissingCityCountryCommand();
